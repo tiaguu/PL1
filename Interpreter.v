@@ -36,12 +36,40 @@ Notation "'LETOPT' x <== e1 'IN' e2"
                See the notation LETOPT commented above (or in the ImpCEval chapter).
 *)
 
+
 Fixpoint ceval_step (st : state) (c : com) (i : nat): option (state*result) :=
   match i with
   | O => None
   | S i' =>
-  (* TODO *)
-end.
+    match c with
+    | <{skip}> => Some (st, SContinue)
+    | <{var := val}> => Some ((var !-> aeval st val; st), SContinue)
+    | <{c1; c2}> =>
+      match ceval_step st c1 i' with
+      | Some (st', SContinue) => ceval_step st' c2 i'
+      | Some (st', SBreak) => Some (st', SBreak)
+      | _ => None
+      end
+    | <{if b then c1 else c2 end}> =>
+      if (beval st b) then ceval_step st c1 i' else ceval_step st c2 i'
+    | <{while b do c end}> =>
+      if (beval st b) then
+        match ceval_step st c i' with
+        | Some (st', SContinue) =>
+          match ceval_step st' c i' with
+          | Some (st'', SContinue) => Some (st'', SContinue)
+          | Some (st'', SBreak) => Some (st'', SContinue)
+          |None => None 
+          end
+        | Some (st', SBreak) => Some (st', SContinue)
+        | None => None
+        end
+      else Some (st, SContinue)
+    | <{break}> => Some (st, SBreak)
+    end
+  end.       (* VERIFICAR SE ESTA CERTO, O WHILE E O <{c1,c2}> PODEM N ESTAR A 100% *)
+
+
 
 (* The following definition is taken from the book and it can be used to
    test the step-indexed interpreter. *)

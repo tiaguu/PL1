@@ -40,31 +40,31 @@ Notation "'LETOPT' x <== e1 'IN' e2"
 Fixpoint ceval_step (st : state) (c : com) (i : nat): option (state*result) :=
   match i with
   | O => None
-  | S i' =>
+  | S i' =>           (* Gas check *)
     match c with
-    | <{skip}> => Some (st, SContinue)
-    | <{var := val}> => Some ((var !-> aeval st val; st), SContinue)
-    | <{c1; c2}> =>
-      match ceval_step st c1 i' with
-      | Some (st', SContinue) => ceval_step st' c2 i'
-      | Some (st', SBreak) => Some (st', SContinue)
-      | _ => None 
+    | <{skip}> => Some (st, SContinue) (* Skip command, return current state *)
+    | <{var := val}> => Some ((var !-> aeval st val; st), SContinue) (* Assign new variable *)
+    | <{c1; c2}> =>    (* Sequential commands *)
+      match ceval_step st c1 i' with   (* Check if first command runs without break *)
+      | Some (st', SContinue) => ceval_step st' c2 i'   (* If so, do the second command *)
+      | Some (st', SBreak) => Some (st', SContinue)     (* If break, skip the second command*)
+      | _ => None    (* If evaluation of c1 fails, return None *)
       end
-    | <{if b then c1 else c2 end}> =>
-      if (beval st b) then ceval_step st c1 i' else ceval_step st c2 i'
+    | <{if b then c1 else c2 end}> => (* If b is true, perform command c1, otherwise do c2 *)
+      if (beval st b) then ceval_step st c1 i' else ceval_step st c2 i' 
     | <{while b do c end}> =>
-      if (beval st b) then
-        match ceval_step st c i' with
-        | Some (st', SContinue) =>
+      if (beval st b) then    (* If b is true *)
+        match ceval_step st c i' with (* evaluates command c, checks the result *)
+        | Some (st', SContinue) =>   (* If it returns SContinue, recursively evaluate loop *)
           match ceval_step st' <{while b do c end}> i' with
-          | Some (st'', SContinue) => Some (st'', SContinue)
-          | Some (st'', SBreak) => Some (st'', SContinue)
-          | _ => None
+          | Some (st'', SContinue) => Some (st'', SContinue) (* If SContinue, propagate SContinue *)
+          | Some (st'', SBreak) => Some (st'', SContinue) (* if SBreak, propagate SContinue *)
+          | _ => None    (* if evaluation fails, returns None *)
           end
-        | _ => Some (st, SContinue)
+        | _ => Some (st, SContinue) (* Else return current state with SContinue*)
         end
       else Some (st, SContinue)
-    | <{break}> => Some (st, SBreak)
+    | <{break}> => Some (st, SBreak)  (* Return current state with SBreak *)
     end
   end.       
 

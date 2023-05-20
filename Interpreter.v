@@ -47,8 +47,8 @@ Fixpoint ceval_step (st : state) (c : com) (i : nat): option (state*result) :=
     | <{c1; c2}> =>
       match ceval_step st c1 i' with
       | Some (st', SContinue) => ceval_step st' c2 i'
-      | Some (st', SBreak) => Some (st', SBreak)
-      | _ => None
+      | Some (st', SBreak) => Some (st', SContinue)
+      | _ => None 
       end
     | <{if b then c1 else c2 end}> =>
       if (beval st b) then ceval_step st c1 i' else ceval_step st c2 i'
@@ -56,19 +56,26 @@ Fixpoint ceval_step (st : state) (c : com) (i : nat): option (state*result) :=
       if (beval st b) then
         match ceval_step st c i' with
         | Some (st', SContinue) =>
-          match ceval_step st' c i' with
+          match ceval_step st' <{while b do c end}> i' with
           | Some (st'', SContinue) => Some (st'', SContinue)
           | Some (st'', SBreak) => Some (st'', SContinue)
-          |None => None 
+          | _ => None
           end
-        | Some (st', SBreak) => Some (st', SContinue)
-        | None => None
+        | _ => Some (st, SContinue)
         end
       else Some (st, SContinue)
     | <{break}> => Some (st, SBreak)
     end
-  end.       (* VERIFICAR SE ESTA CERTO, O WHILE E O <{c1,c2}> PODEM N ESTAR A 100% *)
+  end.       
 
+Definition example_command1 : com := 
+<{ X := 10;
+   Y := 0;
+   Z := 0;
+   while X > 3 do
+     if Y > 5 then break else Y := Y + 1; Z := Z + 2; X := X - 1
+   end
+end }>. (* COMANDO PRA TESTAR *)
 
 
 (* The following definition is taken from the book and it can be used to
@@ -78,6 +85,8 @@ Definition test_ceval (st:state) (c:com) :=
   | None    => None
   | Some (st, _) => Some (st X, st Y, st Z)
   end.
+
+Compute test_ceval (empty_st) (example_command1). (* OBTER VALORES DE OUTPUT *)
 
 Example example_test_ceval :
      test_ceval empty_st

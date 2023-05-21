@@ -36,41 +36,61 @@ Notation "'LETOPT' x <== e1 'IN' e2"
                See the notation LETOPT commented above (or in the ImpCEval chapter).
 *)
 
+Declare Scope ceval_step_scope.
+
+Open Scope ceval_step_scope.
+
+Notation "'con' st" :=    (* Notation to simplify writing when result is Some(st, SContinue) *)
+  (Some (st, SContinue))
+    (at level 70, no associativity)
+    : ceval_step_scope.
+
+Notation "'brk' st" :=    (* Notation to simplify writing when result is Some(st, SBreak) *)
+  (Some (st, SBreak))
+    (at level 70, no associativity)
+    : ceval_step_scope.
+
+Notation "'err'" :=       (* Notation to simplify writing when result is None *)
+  (None)
+    (at level 70, no associativity)
+    : ceval_step_scope.
 
 Fixpoint ceval_step (st : state) (c : com) (i : nat): option (state*result) :=
   match i with
-  | O => None
+  | O => err
   | S i' =>           (* Gas check *)
     match c with
-    | <{skip}> => Some (st, SContinue) (* Skip command, return current state *)
-    | <{var := val}> => Some ((var !-> aeval st val; st), SContinue) (* Assign new variable *)
+    | <{skip}> => con st (* Skip command, return current state *)
+    | <{var := val}> => con (var !-> aeval st val; st) (* Assign new variable *)
     | <{c1; c2}> =>    (* Sequential commands *)
       match ceval_step st c1 i' with   (* Check if first command runs without break *)
-      | Some (st', SContinue) => ceval_step st' c2 i'   (* If so, do the second command *)
-      | Some (st', SBreak) => Some (st', SContinue)     (* If break, skip the second command*)
-      | _ => None    (* If evaluation of c1 fails, return None *)
+      | con st' => ceval_step st' c2 i'   (* If so, do the second command *)
+      | brk st' => con st'     (* If break, skip the second command*)
+      | _ => err    (* If evaluation of c1 fails, return None *)
       end
     | <{if b then c1 else c2 end}> => (* If b is true, perform command c1, otherwise do c2 *)
       if (beval st b) then ceval_step st c1 i' else ceval_step st c2 i' 
     | <{while b do c end}> =>
       if (beval st b) then    (* If b is true *)
         match ceval_step st c i' with (* evaluates command c, checks the result *)
-        | Some (st', SContinue) =>   (* If it returns SContinue, recursively evaluate loop *)
+        | con st' =>   (* If it returns SContinue, recursively evaluate loop *)
           match ceval_step st' <{while b do c end}> i' with
-          | Some (st'', SContinue) => Some (st'', SContinue) (* If SContinue, propagate SContinue *)
-          | Some (st'', SBreak) => Some (st'', SContinue) (* if SBreak, propagate SContinue *)
-          | _ => None    (* if evaluation fails, returns None *)
+          | con st'' => con st'' (* If SContinue, propagate SContinue *)
+          | brk st'' => con st'' (* if SBreak, propagate SContinue *)
+          | _ => err    (* if evaluation fails, returns None *)
           end
-        | _ => Some (st, SContinue) (* Else return current state with SContinue*)
+        | _ => con st (* Else return current state with SContinue*)
         end
-      else Some (st, SContinue)
-    | <{break}> => Some (st, SBreak)  (* Return current state with SBreak *)
+      else con st
+    | <{break}> => brk st  (* Return current state with SBreak *)
     end
   end.       
 
+Close Scope ceval_step_scope.
+
 Definition example_command1 : com := 
-<{ X := 10;
-   Y := 0;
+<{ X := 5;
+   Y := 7;
    Z := 0;
    while X > 3 do
      if Y > 5 then break else Y := Y + 1; Z := Z + 2; X := X - 1

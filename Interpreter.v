@@ -148,15 +148,12 @@ Proof.
 
 (* NOTA: ainda n ta 100%, mas o resultado ta mm quase lá. N tou a conseguir terminar *)
 
-
 (* TODO *)
 Theorem p1_equivalent_p2: forall st,
   (exists i0,
     forall i1, i1>=i0 ->
       ceval_step st p1 i1 = ceval_step st p2 i1
   ).
-Proof.
-  (* TODO *)
-Qed.
+
 
 

@@ -150,15 +150,16 @@ Inductive ceval : com -> state -> result -> state -> Prop :=
              Add a succint comment before each property explaining the property in your own words.
 *)
 
-(**
+
 Theorem break_ignore : forall c st st' s,
      st =[ break; c ]=> st' / s ->
      st = st'.
 Proof.
-  intros. inversion H. subst. inversion H5. subst. reflexivity.
-  subst. inversion H2.
+  intros c st st' s Hceval. inversion Hceval; subst.
+    - inversion H1.
+    - inversion H4. reflexivity.
 Qed.
-*)
+
 
 Theorem while_continue : forall b c st st' s,
   st =[ while b do c end ]=> st' / s ->
@@ -167,16 +168,18 @@ Proof.
   intros. inversion H; try reflexivity; subst. 
 Qed.
 
-(**
+
 Theorem while_stops_on_break : forall b c st st',
   beval st b = true ->
   st =[ c ]=> st' / SBreak ->
   st =[ while b do c end ]=> st' / SContinue.
 Proof.
- intros. apply E_While_2 with (st := st) (st':= st'). apply H.
- apply H0.
+  intros b c st st' Hcond Hceval.
+  apply E_While2 with (st:=st) (st':=st').
+    - assumption.
+    - assumption.
 Qed.
-*)
+
 
 (**
 Theorem seq_continue : forall c1 c2 st st' st'',

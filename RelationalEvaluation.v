@@ -175,30 +175,27 @@ Theorem while_stops_on_break : forall b c st st',
   st =[ while b do c end ]=> st' / SContinue.
 Proof.
   intros b c st st' Hcond Hceval.
-  apply E_While2 with (st:=st) (st':=st').
-    - assumption.
-    - assumption.
+  apply E_While2 with (st:=st) (st':=st'); assumption.
 Qed.
 
 
-(**
+
 Theorem seq_continue : forall c1 c2 st st' st'',
   st =[ c1 ]=> st' / SContinue ->
   st' =[ c2 ]=> st'' / SContinue ->
   st =[ c1 ; c2 ]=> st'' / SContinue.
 Proof.
-  (* TODO *)
-Abort.
-*)
+  intros. apply E_Seq with (st' := st'); assumption.
+Qed.
 
-(**
+
 Theorem seq_stops_on_break : forall c1 c2 st st',
   st =[ c1 ]=> st' / SBreak ->
   st =[ c1 ; c2 ]=> st' / SBreak.
 Proof.
-  (* TODO *)
-Abort.
-*)
+  intros. apply E_SeqBreak with (st' := st'). assumption.
+Qed.
+
 
 (**
 Theorem while_break_true : forall b c st st',

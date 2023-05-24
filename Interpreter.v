@@ -65,7 +65,7 @@ Fixpoint ceval_step (st : state) (c : com) (i : nat): option (state*result) :=
     | <{c1; c2}> =>    (* Sequential commands *)
       match ceval_step st c1 i' with   (* Check if first command runs without break *)
       | con st' => ceval_step st' c2 i'   (* If so, do the second command *)
-      | brk st' => con st'     (* If break, skip the second command*)
+      | brk st' => brk st'     (* If break, skip the second command*)
       | _ => err    (* If evaluation of c1 fails, return None *)
       end
     | <{if b then c1 else c2 end}> => (* If b is true, perform command c1, otherwise do c2 *)
@@ -144,7 +144,8 @@ ceval_step st <{ break; c }> i1
 ceval_step st <{ skip }> i1
 ).
 Proof.
-  exists 2. intros. destruct i1; try lia. destruct i1; try lia. simpl. Admitted.
+  exists 2. intros. destruct i1; try lia. destruct i1; try lia. simpl. 
+  injection. discriminate. Qed.
 
 (* NOTA: ainda n ta 100%, mas o resultado ta mm quase lá. N tou a conseguir terminar *)
 
@@ -154,6 +155,10 @@ Theorem p1_equivalent_p2: forall st,
     forall i1, i1>=i0 ->
       ceval_step st p1 i1 = ceval_step st p2 i1
   ).
-
-
-
+Proof.
+  exists 5. intros. 
+  destruct i1; try lia. 
+  destruct i1; try lia. 
+  destruct i1; try lia. 
+  destruct i1; try lia. 
+  destruct i1; try lia. inversion H. destruct p1; simpl. try lia. 

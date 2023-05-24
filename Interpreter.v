@@ -156,9 +156,12 @@ Theorem p1_equivalent_p2: forall st,
       ceval_step st p1 i1 = ceval_step st p2 i1
   ).
 Proof.
-  exists 5. intros. 
+  exists 6. intros. 
   destruct i1; try lia. 
   destruct i1; try lia. 
   destruct i1; try lia. 
   destruct i1; try lia. 
-  destruct i1; try lia. inversion H. destruct p1; simpl. try lia. 
+  destruct i1; try lia.
+  destruct i1; try lia. simpl. reflexivity. 
+Qed. 
+  

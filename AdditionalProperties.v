@@ -31,8 +31,57 @@ i1 <= i2 ->
 ceval_step st c i1 = Some (st', res) ->
 ceval_step st c i2 = Some (st', res).
 Proof.
+
+
+(*   intros i1 i2 st st' res c Hleq Hstep.
+  generalize dependent i2.
+  induction i2; intros.
+  - inversion Hleq; subst. assumption.
+  - destruct i1.
+    + simpl in Hstep. inversion Hstep; subst.
+    + destruct i2 as [| i2'].
+      * inversion Hleq.
+        ** rewrite <- Hstep. apply Hleq. 
+      * apply le_S_n in Hleq. assumption.
+      * assumption. *)
+
+ induction i1 as [|i1']; intros i2 st st' res c Hle Hceval.
+  - simpl in Hceval. discriminate Hceval.
+  - destruct i2 as [|i2'].
+    + inversion Hle.
+    + assert (Hle': i1' <= i2') by lia.
+    destruct c.
+      * simpl in Hceval. inversion Hceval.
+        reflexivity.
+      * simpl in Hceval. inversion Hceval.
+        reflexivity.
+      * simpl in Hceval. simpl. assumption.
+      * simpl in Hceval. simpl. destruct (ceval_step st c1 i1') eqn:Heqst1'o. 
+          ** assert (prop: ceval_step st c1 i2' = Some p).
+          {
+              inversion Hle.
+              + subst. rewrite <- Heqst1'o. try reflexivity.
+              + subst. rewrite <- Heqst1'o. 
+          }
+  
+
+
+
+
+
+
+        ++ destruct (ceval_step st c1 i1') eqn:Heqst1'o.
+    *** simpl in H. apply H.
+        destruct (ceval_step st c1 i1') eqn:Heqst1'o.
+        ** (*"st1'o = Some".*)
+          apply (IHi1' i2') in Heqst1'o; try assumption.
+          rewrite Heqst1'o. simpl. simpl in Hceval.
+          apply (IHi1' i2') in Hceval; try assumption.
+         (*"st1'o = None".*)
+          inversion Hceval. 
   (* TODO *)
-Qed.
+ *)Qed.
+
 
 
 (* ################################################################# *)

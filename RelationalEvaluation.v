@@ -196,17 +196,18 @@ Proof.
   intros. apply E_SeqBreak with (st' := st'). assumption.
 Qed.
 
-
-(**
 Theorem while_break_true : forall b c st st',
   st =[ while b do c end ]=> st' / SContinue ->
   beval st' b = true ->
   exists st'', st'' =[ c ]=> st' / SBreak.
 Proof.
-intros. remember (WHILE b DO c END) as cc.
- ceval_cases (induction H) Case; try inversion Heqcc;  subst.
-              apply IHceval2. apply Heqcc. apply H0. 
-              exists st. apply H1.
-              rewrite H in H0. inversion H0.
+intros.
+remember (CWhile b c) as cc.
+induction H; try (inversion Heqcc; subst).
+- apply IHceval2. 
+  + apply Heqcc.
+  + apply H0.
+- exists st. apply H1.
+- rewrite H in H0. inversion H0.
 Qed.
-*)
+

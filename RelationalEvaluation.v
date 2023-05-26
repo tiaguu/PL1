@@ -150,7 +150,7 @@ Inductive ceval : com -> state -> result -> state -> Prop :=
              Add a succint comment before each property explaining the property in your own words.
 *)
 
-
+(*prova de que o break funciona, ou seja, que passa para o comando seguinte*)
 Theorem break_ignore : forall c st st' s,
      st =[ break; c ]=> st' / s ->
      st = st'.
@@ -160,7 +160,7 @@ Proof.
     - inversion H4. reflexivity.
 Qed.
 
-
+(*prova de que o continue funciona no while, ou seja, que passa para o loop seguinte*)
 Theorem while_continue : forall b c st st' s,
   st =[ while b do c end ]=> st' / s ->
   s = SContinue.
@@ -168,7 +168,7 @@ Proof.
   intros. inversion H; try reflexivity; subst. 
 Qed.
 
-
+(*prova de que o break funciona no while, ou seja, que o while acaba quando ha break*)
 Theorem while_stops_on_break : forall b c st st',
   beval st b = true ->
   st =[ c ]=> st' / SBreak ->
@@ -179,7 +179,7 @@ Proof.
 Qed.
 
 
-
+(*prova de que o continue funciona numa sequencia, ou seja, que passa para o comando seguinte na sequencia*)
 Theorem seq_continue : forall c1 c2 st st' st'',
   st =[ c1 ]=> st' / SContinue ->
   st' =[ c2 ]=> st'' / SContinue ->
@@ -188,7 +188,7 @@ Proof.
   intros. apply E_Seq with (st' := st'); assumption.
 Qed.
 
-
+(*prova de que o break funciona na sequencia, ou seja, que a sequencia acaba quando ha break*)
 Theorem seq_stops_on_break : forall c1 c2 st st',
   st =[ c1 ]=> st' / SBreak ->
   st =[ c1 ; c2 ]=> st' / SBreak.

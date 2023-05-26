@@ -20,18 +20,18 @@ Proof of inequivalence1                                     Guilherme
 Proof of p1_equivalent_p2                                   Guilherme
 
 Task 3.1
-Definition of ceval                                         Nome
-Proof of break_ignore                                       Nome
-Proof of while_continue                                     Nome
+Definition of ceval                                         Tiago
+Proof of break_ignore                                       Tiago
+Proof of while_continue                                     Guilherme
 Proof of while_stops_on_break                               Guilherme
 Proof of seq_continue                                       Guilherme
 Proof of seq_stops_on_break                                 Guilherme
-Proof of while_break_true                                   Nome
+Proof of while_break_true                                   Tiago
 
 Task 3.2
 Proof of ceval_step_more                                    Nuno (ate caso sequential) & Guilherme (resto)
-Proof of ceval_step__ceval                                  Nuno
-Proof of ceval__ceval_step                                  Not done
+Proof of ceval_step__ceval                                  Nuno (ate caso sequential) & Tiago (resto)
+Proof of ceval__ceval_step                                  Tiago
 Informal proof of ceval_deterministic'                      Nuno
 
 # Extras

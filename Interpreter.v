@@ -95,7 +95,7 @@ Definition example_command1 : com :=
    while X > 3 do
      if Y > 5 then break else Y := Y + 1; Z := Z + 2; X := X - 1
    end
-end }>. (* COMANDO PRA TESTAR *)
+end }>.
 
 
 (* The following definition is taken from the book and it can be used to

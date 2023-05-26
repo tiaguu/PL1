@@ -55,8 +55,7 @@ Proof.
         * simpl in Hceval. simpl. destruct (beval st b); try assumption.
           destruct (ceval_step st c i1') eqn: Heqst1'o.
           ** destruct p; destruct r; apply (IHi1' i2') in Heqst1'o; try assumption.
-          *** rewrite -> Heqst1'o. destruct (ceval_step s <{ while b do c end }> i2').
-          **** destruct p; destruct r
+          *** rewrite -> Heqst1'o. simpl.
 
 
 

@@ -96,13 +96,17 @@ Qed.
 (* TODO: Write/explain the following proof in natural language, 
          using your own words. *)  
 
-(*Temos com objectivo provar que a avaliacao e deterministica, logo, 
-temos que provar que a avaliacao da sempre o mesmo resultado. 
-Aplicamos a Relational Evaluation duas vezes, com estados e resultados diferentes e,
-de seguida aplicamos a Step-Indexed Evaluation, para testar se a igualdade se mantem.
-Sendo que e de facto determinista, a igualdade mantem se e a prova acaba com sucesso.*)
-
-(*Nao tenho a certeza se é preciso mais detalhe que isto*)
+(*
+Introduzimos duas hipoteses (He1 e He2) em que 'st' avaliado por 'c' da origem a 'st1' e 'res1' para He1
+ e 'st2' e 'res2' para He2.
+Aplicamos a Relational Evaluation ('ceval__ceval_step') as duas hipoteses.
+Estraimos i1 e i2, que sao os numero de passos das evaluations e E1 e E2, que sao os comandos restantes
+ depois da evaluation.
+De seguida aplicamos a Step-Indexed Evaluation ('ceval_step_more') a E1 e E2 com o numero de
+ passos a 'i1+i2'.
+O resultado destas duas evaluations fica o mesmo, em que 'st1' igual a 'st2',
+ que fica de acordo com a conclusao do teorema.
+ *)
 
 Theorem ceval_deterministic' : forall c st st1 st2 res1 res2,
    st =[ c ]=> st1 / res1 ->

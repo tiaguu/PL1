@@ -31,8 +31,35 @@ i1 <= i2 ->
 ceval_step st c i1 = Some (st', res) ->
 ceval_step st c i2 = Some (st', res).
 Proof.
-  (* TODO *)
-Qed.
+  induction i1 as [|i1']; intros i2 st st' res c Hle Hceval.
+    - simpl in Hceval. discriminate Hceval.
+    - destruct i2 as [|i2'].
+      + inversion Hle.
+      + assert (Hle': i1' <= i2') by lia. destruct c.
+        * simpl in Hceval. inversion Hceval. reflexivity.
+        * simpl in Hceval. inversion Hceval. reflexivity.
+        * simpl in Hceval. simpl. assumption.
+        * simpl in Hceval. simpl. destruct (ceval_step st c1 i1') eqn: Heqst1'o.
+          ** assert (prop: ceval_step st c1 i2' = Some p).
+            {
+              destruct p as [st'' r]. apply IHi1' with (st':=st'')(res := r).
+                + assumption.
+                + assumption.
+            }
+          rewrite prop. destruct p. destruct r.
+          ++ apply IHi1'; try assumption.
+          ++ apply Hceval.
+          ** discriminate.
+        * simpl in Hceval. simpl. destruct (beval st b); apply (IHi1' i2') in Hceval;
+        assumption.
+        * simpl in Hceval. simpl. destruct (beval st b); try assumption.
+          destruct (ceval_step st c i1') eqn: Heqst1'o.
+          ** destruct p; destruct r; apply (IHi1' i2') in Heqst1'o; try assumption.
+          *** rewrite -> Heqst1'o. destruct (ceval_step s <{ while b do c end }> i2').
+          **** destruct p; destruct r
+
+
+
 
 
 (* ################################################################# *)

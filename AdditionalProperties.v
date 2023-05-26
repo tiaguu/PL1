@@ -82,9 +82,47 @@ generalize dependent st.
 generalize dependent c.
 induction i as [| i' ].
 
-(* TODO *)
+- (*"i = 0 -- contradictory".*)
+    intros c st st' res H. inversion H.
 
-Qed.
+- (*"i = S i'".*)
+    intros c st st' res H.
+    destruct c;
+      simpl in H; inversion H; subst; clear H.
+      + (*"SKIP".*) apply E_Skip.
+      + (*"BREAK".*) apply E_Break.
+      + (*"ASGN".*) apply E_Asgn. reflexivity.
+
+      + (*"SEQ".*)
+        destruct (ceval_step st c1 i') eqn:Heqr1.
+        * (*"Evaluation of r1 terminates normally".*)
+          apply E_Seq with st.
+            (* There are 2 subgoals here but we could not prove them.*)
+            ** admit.
+            ** admit.
+        * (*"Otherwise -- contradiction".*)
+          inversion H1.
+      + (*"IF".*)
+          destruct (beval st b) eqn:Heqr.
+          * (* beval st b = true *)
+            apply E_IfTrue. 
+              ** rewrite Heqr. reflexivity.
+              ** apply IHi' with (res := res) (st' := st'). assumption.
+          * (* beval st b = false *)
+            apply E_IfFalse.
+              ** rewrite Heqr. reflexivity.
+              ** apply IHi' with (res := res) (st' := st'). assumption.
+      + (*"WHILE".*)
+        destruct (beval st b) eqn:Heqr.
+        * (* beval st b = true *)
+          destruct (ceval_step st c i') eqn:Heqr1.
+           (* Evaluation of c1 terminates normally *)
+            ** admit.
+            ** admit.
+          * (* Evaluation of c1 does not terminate *)
+            inversion H1. admit.
+           (* beval st b = false *)
+Admitted.
 
 (** 
   TODO: For the following proof, you'll need [ceval_step_more] in a
@@ -94,10 +132,39 @@ Theorem ceval__ceval_step: forall c st st' res,
     st =[ c ]=> st' / res ->
     exists i, ceval_step st c i = Some (st', res).
 Proof.
-  (* TODO *)
-Qed. 
+intros c st st' res Hce.
+  induction Hce; subst.
+  
+  - (* E_Skip *)
+    exists 1. simpl. reflexivity.
+  
+  - (* E_Break *)
+    exists 1. simpl. reflexivity.
+  
+  - (* E_Asgn *)
+    exists 1. simpl. reflexivity.
+  
+  - (* E_Seq *)
+    admit.
 
+  - (* E_SeqBreak *)
+    admit.
+  
+  - (* E_IfTrue *)
+    admit.
+  
+  - (* E_IfFalse *)
+    admit.
+  
+  - (* E_While1 *)
+    admit.
+  
+  - (* E_While2 *)
+    admit.
 
+  - (* E_While3 *)
+    admit.
+Admitted.
 
 (* Note that with the above properties, we can say that both semantics are equivalent! *)
 

@@ -168,7 +168,8 @@ Proof.
   intros. inversion H; try reflexivity; subst. 
 Qed.
 
-(*prova de que o break funciona no while, ou seja, que o while termina quando ha break, sai do loop*)
+(*prova de que o break funciona no while, ou seja, que o while termina 
+quando ha break, sai do loop*)
 Theorem while_stops_on_break : forall b c st st',
   beval st b = true ->
   st =[ c ]=> st' / SBreak ->
@@ -179,7 +180,8 @@ Proof.
 Qed.
 
 
-(*prova de que a sequencia devolve sempre SContinue e que passa para o comando seguinte na sequencia*)
+(*prova de que se ambos os comandos duma sequencia devolvem SContinue,
+ aplicar a sequencia devolve o estado final do segundo comando com SContinue*)
 Theorem seq_continue : forall c1 c2 st st' st'',
   st =[ c1 ]=> st' / SContinue ->
   st' =[ c2 ]=> st'' / SContinue ->
@@ -188,7 +190,8 @@ Proof.
   intros. apply E_Seq with (st' := st'); assumption.
 Qed.
 
-(*prova de que o break funciona na sequencia, ou seja, que a sequencia termina quando ha break*)
+(*prova de que o break funciona na sequencia, ou seja, que a sequencia termina
+ quando ha break apos o primeiro comando*)
 Theorem seq_stops_on_break : forall c1 c2 st st',
   st =[ c1 ]=> st' / SBreak ->
   st =[ c1 ; c2 ]=> st' / SBreak.
@@ -196,6 +199,8 @@ Proof.
   intros. apply E_SeqBreak with (st' := st'). assumption.
 Qed.
 
+
+(*   *)
 Theorem while_break_true : forall b c st st',
   st =[ while b do c end ]=> st' / SContinue ->
   beval st' b = true ->

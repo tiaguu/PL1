@@ -31,8 +31,34 @@ i1 <= i2 ->
 ceval_step st c i1 = Some (st', res) ->
 ceval_step st c i2 = Some (st', res).
 Proof.
-  (* TODO *)
-Qed.
+  induction i1 as [|i1']; intros i2 st st' res c Hle Hceval.
+    - simpl in Hceval. discriminate Hceval.
+    - destruct i2 as [|i2'].
+      + inversion Hle.
+      + assert (Hle': i1' <= i2') by lia. destruct c.
+        * simpl in Hceval. inversion Hceval. reflexivity.
+        * simpl in Hceval. inversion Hceval. reflexivity.
+        * simpl in Hceval. simpl. assumption.
+        * simpl in Hceval. simpl. destruct (ceval_step st c1 i1') eqn: Heqst1'o.
+          ** assert (prop: ceval_step st c1 i2' = Some p).
+            {
+              destruct p as [st'' r]. apply IHi1' with (st':=st'')(res := r).
+                + assumption.
+                + assumption.
+            }
+          rewrite prop. destruct p. destruct r.
+          ++ apply IHi1'; try assumption.
+          ++ apply Hceval.
+          ** discriminate.
+        * simpl in Hceval. simpl. destruct (beval st b); apply (IHi1' i2') in Hceval;
+        assumption.
+        * simpl in Hceval. simpl. destruct (beval st b); try assumption.
+          destruct (ceval_step st c i1') eqn: Heqst1'o.
+          ** destruct p; destruct r; apply (IHi1' i2') in Heqst1'o; try assumption.
+          *** rewrite -> Heqst1'o. 
+Admitted.
+
+(* NOTA: faltou apenas em ceval_step_more acabar de provar o caso do while*)
 
 
 (* ################################################################# *)
@@ -99,11 +125,11 @@ Qed.
 (*
 Temos como objectivo provar que a evaluation e deterministica, para isso queremos provar que,
  a relational e a step-indexed evaluations funcionam da mesma maneira.
-Introduzimos duas hipoteses (He1 e He2) em que 'st' avaliado por 'c' da origem a 'st1' e 'res1' para He1
- e 'st2' e 'res2' para He2.
+Introduzimos duas hipoteses (He1 e He2) em que 'st' avaliado por 'c' da origem a 
+'st1' e 'res1' para He1 e 'st2' e 'res2' para He2.
 Aplicamos a Relational Evaluation ('ceval__ceval_step') as duas hipoteses.
-Estraimos i1 e i2, que sao os numero de passos das evaluations e E1 e E2, que sao os comandos restantes
- depois da evaluation.
+Estraimos i1 e i2, que sao os numero de passos das evaluations e E1 e E2, que sao
+ os comandos restantes depois da evaluation.
 De seguida aplicamos a Step-Indexed Evaluation ('ceval_step_more') a E1 e E2 com o numero de
  passos a 'i1+i2'.
 O resultado destas duas evaluations fica o mesmo, em que 'st1' igual a 'st2',

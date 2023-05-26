@@ -125,6 +125,9 @@ Proof. reflexivity. Qed.
   2.2. TODO: Prove the following three properties.
              Add a succint explanation in your own words of why `equivalence1` and `inequivalence1` are valid.
 *)
+
+(*prova que executar break e depois um comando c e' o mesmo que executar break seguido de skip.
+ Expectavel, dado que break no inicio do programa vai terminar o programa.*)
 Theorem equivalence1: forall st c,
 (exists i0,
 forall i1, i1>=i0 ->
@@ -136,6 +139,8 @@ Proof.
   exists 2. intros. destruct i1; try lia. destruct i1; try lia. simpl. reflexivity.
 Qed.
 
+(*prova que executar break seguido dum comando nao e' o mesmo que executar apenas skip. Expectavel porque
+ no primeiro caso o programa termina com Some (st, SBreak) e no segundo com Some (st, SContinue)*)
 Theorem inequivalence1: forall st c,
 (exists i0,
 forall i1, i1>=i0 ->
@@ -147,9 +152,8 @@ Proof.
   exists 2. intros. destruct i1; try lia. destruct i1; try lia. simpl. 
   injection. discriminate. Qed.
 
-(* NOTA: ainda n ta 100%, mas o resultado ta mm quase lá. N tou a conseguir terminar *)
-
 (* TODO *)
+(*prova que os programas p1 e p2 sao equivalentes apesar de escritos de modo diferente*)
 Theorem p1_equivalent_p2: forall st,
   (exists i0,
     forall i1, i1>=i0 ->

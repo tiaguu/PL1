@@ -97,6 +97,8 @@ Qed.
          using your own words. *)  
 
 (*
+Temos como objectivo provar que a evaluation e deterministica, para isso queremos provar que,
+ a relational e a step-indexed evaluations funcionam da mesma maneira.
 Introduzimos duas hipoteses (He1 e He2) em que 'st' avaliado por 'c' da origem a 'st1' e 'res1' para He1
  e 'st2' e 'res2' para He2.
 Aplicamos a Relational Evaluation ('ceval__ceval_step') as duas hipoteses.

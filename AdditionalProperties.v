@@ -26,6 +26,10 @@ Set Default Goal Selector "!".
 (* ################################################################# *)
 (** * Property of the Step-Indexed Interpreter *)
 
+(* Prova que se ao avaliar um programa com i1 de gas, se esse programa executa e 
+ devolve Some (st', res), se usarmos mais gas (i2>=i1), vamos sempre obter o mesmo 
+ resultado *)
+
 Theorem ceval_step_more: forall i1 i2 st st' res c,
 i1 <= i2 ->
 ceval_step st c i1 = Some (st', res) ->
@@ -68,6 +72,10 @@ Admitted.
     the two alternative definitions of evaluation would actually
     amount to the same thing in the end.  This section shows that this
     is the case. *)
+
+(* Prova que se existe um dado valor de gas que corre o programa c e devolve Some(st',res) 
+ avaliando com a função ceval_step, então para a implementação relational, o resultado será
+ o mesmo*)
 
 Theorem ceval_step__ceval: forall c st st' res,
     (exists i, ceval_step st c i = Some (st', res)) ->
@@ -127,6 +135,10 @@ Admitted.
 (** 
   TODO: For the following proof, you'll need [ceval_step_more] in a
   few places, as well as some basic facts about [<=] and [plus]. *)
+
+(* Prova o inverso da prova anterior: se conseguimos avaliar um programa partindo dum estado st,
+com a relational, obtendo Some(st',res), entao existe um valor para gas tal que com a step
+ implementation obtemos o mesmo resultado (Some(st',res)) *)
 
 Theorem ceval__ceval_step: forall c st st' res,
     st =[ c ]=> st' / res ->

@@ -128,7 +128,7 @@ Proof. reflexivity. Qed.
 
 (*prova que executar break e depois um comando c e o mesmo que executar break
  seguido de skip. Expectavel, dado que break no inicio do programa 
- vai terminar o programa.*)
+ vai terminar o programa (ambos os casos devolvem Some(st, SBreak)).*)
 Theorem equivalence1: forall st c,
 (exists i0,
 forall i1, i1>=i0 ->

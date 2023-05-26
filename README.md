@@ -2,7 +2,7 @@
 
  - Nuno Damas, 84155, nuno.damas@tecnico.ulisboa.pt
  - Guilherme Folgado, 92685, guilherme.folgado@tecnico.ulisboa.pt
- - FirstName LastName, IST number, Email
+ - Tiago Teodoro, IST 105720, tiagogteodoro@tecnico.ulisboa.pt
 
 # Implemented Features
 TODO: Identify what you have done and, in particular, **identify any missing features**.
